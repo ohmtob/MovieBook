@@ -1,0 +1,212 @@
+package com.example.MovieBook;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Controller
+public class MovieBookController {
+
+    @Autowired
+    MovieRepository movieRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+
+    @GetMapping("/login")
+    public String loginPage(HttpSession session){
+        return"login";
+    }
+    @PostMapping("/login")
+    public String loginForm(HttpSession session, @RequestParam String username, @RequestParam String password){
+<<<<<<< HEAD
+        if(username.equals("")) {
+=======
+        if(username.equals("")){
+>>>>>>> Alexander
+            return "login";
+        }
+        if(password.equals(userRepository.getUserPassword(username))) {
+            if(session.getAttribute("user") == null) {
+                session.setAttribute("User", username);
+                session.setAttribute("wishedMovies", movieRepository.getWishListByUser(username));
+                session.setAttribute("seenMovies", movieRepository.getSeenMoviesByUser(username));
+                session.setAttribute("friends", userRepository.getFriendListByUser(3));
+            }
+            return "UserProfile";
+        }
+    return"login";
+    }
+
+    @GetMapping("/UserProfile")
+        public String firstPage(HttpSession session){
+            String username = (String)session.getAttribute("user");
+            if(username!=null){
+                return "UserProfile";
+            }
+            return "login";
+        }
+
+        @GetMapping("/logout")
+        public String logout(HttpSession session){
+        session.invalidate();
+        return "login";
+        }
+
+         @GetMapping("/searchtest")
+         public String search(Model model){
+            String[] allChoices = {"Title", "Director", "Actor", "Genre", "Country", "Language", "Year"};
+            model.addAttribute("allChoices", allChoices);
+            return "searchpage";
+         }
+
+    @PostMapping("/searchResult")
+    public String searchResult(HttpSession session, Model model, @RequestParam String searchString, String choice){
+        List<Movie> movies = null;
+
+        String[] allChoices = {"Title", "Director", "Actor", "Genre", "Country", "Language", "Year"};
+        model.addAttribute("allChoices", allChoices);
+
+        model.addAttribute("showMovie", true);
+
+        if(choice.equals("Title")) {
+            movies = movieRepository.getMoviesByName(searchString);
+            } else if(choice.equals("Director")) {
+            movies = movieRepository.getMovieByDirectorWholeName(searchString);
+        } else if(choice.equals("Actor")) {
+            movies = movieRepository.getMoviesByActor(searchString);
+        } else if(choice.equals("Genre")) {
+            movies = movieRepository.getMoviesByGenre(searchString);
+        } else if(choice.equals("Country")) {
+            movies = movieRepository.getMoviesByCountry(searchString);
+        } else if(choice.equals("Language")) {
+            movies = movieRepository.getMoviesByLanguage(searchString);
+        } else if(choice.equals("Year")) {
+            try {
+                movies = movieRepository.getMoviesByYear(Integer.parseInt(searchString));
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(movies == null || movies.size() == 0) {
+            model.addAttribute("showMovie", false);
+            model.addAttribute("noMovies", true);
+        } else {
+            session.setAttribute("activeMovies", movies);
+        }
+        return"searchpage";
+    }
+
+<<<<<<< HEAD
+    @GetMapping("/seenmovies")
+    public String moviesPage(HttpSession session) {
+        session.setAttribute("profileView", 2);
+        return "UserProfile";
+=======
+    @GetMapping("/searchusertest")
+         public String searchUsers(Model model){
+            String[] allChoices = {"Name", "Username", "Country", "Gender"};
+            model.addAttribute("allChoices", allChoices);
+            return "searchuserpage";
+         }
+
+    @PostMapping("/searchResultUsers")
+    public String searchResultUsers(HttpSession session, Model model, @RequestParam String searchString, String choice){
+        List<User> users = null;
+
+        String[] allChoices = {"Name", "Username", "Country", "Gender"};
+        model.addAttribute("allChoices", allChoices);
+
+        model.addAttribute("showUser", true);
+
+        if(choice.equals("Name")) {
+            users = userRepository.getUserByNameWholeName(searchString);
+        }  else if(choice.equals("Username")) {
+            users = userRepository.getUserByUsername(searchString);
+        } else if(choice.equals("Country")) {
+            users = userRepository.getAllUsersByCountry(searchString);
+        } else if(choice.equals("Gender")) {
+            users = userRepository.getAllUsersByGender(searchString);
+        }
+
+        if(users == null || users.size() == 0) {
+            model.addAttribute("showUser", false);
+            model.addAttribute("noUser", true);
+        } else {
+            session.setAttribute("activeUsers", users);
+        }
+        return"searchuserpage";
+    }
+
+    @GetMapping("/Movies")
+    public String moviesPage(HttpSession session){
+        return "/Pages/Movies";
+>>>>>>> Alexander
+    }
+
+    @GetMapping("/wishlist")
+    public String wishlistPage(HttpSession session) {
+        session.setAttribute("profileView", 3);
+        return "UserProfile";
+    }
+
+    @GetMapping("/friends")
+    public String friendsPage(HttpSession session){
+        session.setAttribute("profileView", 1);
+        return "UserProfile";
+    }
+
+    @GetMapping("/removeSeenMovie/{id}")
+    public String removeSeenMovie(HttpSession session, @PathVariable String id){
+        movieRepository.removeMovieFromMovieList(session, Integer.parseInt(id), "hasSeen");
+
+        return "UserProfile";
+    }
+
+    @GetMapping("/removeWishedMovie/{id}")
+    public String removeWishedMovie(HttpSession session, @PathVariable String id){
+        movieRepository.removeMovieFromMovieList(session, Integer.parseInt(id), "wished");
+
+        return "UserProfile";
+    }
+
+    @GetMapping("/removeFriend/{id}")
+    public String removeFriend(HttpSession session, @PathVariable String id){
+        userRepository.removeFriend(session, Integer.parseInt(id));
+
+        return "UserProfile";
+    }
+
+    @GetMapping("/addSeenMovie/{id}")
+    public String addSeenMovie(HttpSession session, @PathVariable String id){
+        System.out.println("Id: " + id);
+        movieRepository.addMovieToMovieList(session, Integer.parseInt(id), "hasSeen");
+        return "searchpage";
+    }
+
+    @GetMapping("/addWishedMovie/{id}")
+    public String addWishedMovie(HttpSession session, @PathVariable String id){
+        System.out.println(id);
+        movieRepository.addMovieToMovieList(session, Integer.parseInt(id), "wished");
+        return "UserProfile";
+    }
+
+    @GetMapping("/addFriend/{id}")
+    public String addFriend(HttpSession session, @PathVariable String id){
+        userRepository.addFriend(session, Integer.parseInt(id));
+
+        return "UserProfile";
+    }
+
+}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/createdAccount" method="post">
+    <input type="text" name="username" placeholder="username"/>
+    <input type="text" name="emailAddress" placeholder="e-mail"/>
+    <input type="password" name="password" placeholder="password"/>
+    <input type="text" name="firstName" placeholder="first name"/>
+    <input type="text" name="lastName" placeholder="last name"/>
+    <input type="text" name="age" placeholder="age"/>
+    <input type="text" name="country" placeholder="country"/>
+    <select name="gender" >
+        <option th:each="choice : ${allChoices}" th:value="${choice}" th:text="${choice}"></option>
+    </select>
+    <input type="submit">
+</form>
+<p th:if="${error == true}" th:text="'Something went wrong'"></p>
+<p th:if="${usernameTaken == true}" th:text="'Account already exists on that username'"></p>
+<p th:if="${emailTaken == true}" th:text="'Account already exists on that e-mail'"></p>
+<p th:if="${emailNotCorrect == true}" th:text="'Email does not contain @'"></p>
+<p th:if="${success == true}" th:text="'The account was created'"></p>
+<a th:href="@{/login}" th:text="'Return to login page'"></a>
+</body>
+</html>

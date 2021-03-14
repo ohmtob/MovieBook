@@ -1,0 +1,10 @@
+#Header {
+  text-align: center;
+  background-color: pink;
+}
+
+#PageNavigation {
+  background-color: green;
+  display: flex;
+  flex-direction: row;
+}

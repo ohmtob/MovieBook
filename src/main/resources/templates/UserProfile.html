@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/normalize.css"/>
+    <link rel="stylesheet" type="text/css" href="/style.css"/>
+    <title>User Profile</title>
+
+
+</head>
+<body>
+
+<!-- Navigational divs --->
+
+<div class="nav">
+    <a href="/UserProfile">Start</a>
+    <a href="/myprofilepage">Profile</a>
+    <a href="/users">Film buddies</a>
+    <a href="/movies">Movies</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<div class="subnav" th:if="${session.pageShown == 3}">
+    <a href="/searchfriends">Search</a>
+    <a href="/suggestedfriends">Friend Suggestions</a>
+    <a href="/myfriends">My Friends</a>
+</div>
+
+<div class="subnav" th:if="${session.pageShown == 4}">
+    <a href="/searchmovies">Search</a>
+    <a href="/topmovies">Top movies</a>
+    <a href="/latestreleases">Latest Release</a>
+    <a href="/suggestedmovies">Suggestions</a>
+</div>
+
+
+<!-- Pages --->
+
+<!-- User Profile --->
+
+<div th:if="${session.pageShown == 2}">
+    <div class="userpresentation">
+        <div>
+            <h1 th:text="${session.user.username}"></h1>
+            <h3 th:text="'Name: ' + ${session.user.firstName} + ' ' + ${session.user.lastName}"></h3>
+            <h3 th:text="'Country: ' + ${session.user.country}"></h3>
+            <h3 th:text="'Age: ' + ${session.user.age}"></h3>
+        </div>
+        <div>
+            <img src="/ProfilBild.png" style="width:auto;height:auto;">
+        </div>
+    </div>
+
+
+    <div class="nav">
+        <a href="/profilefriends">Friends</a>
+        <a href="/seenmovies">Seen Movies</a>
+        <a href="/wishlist">Wish list</a>
+    </div>
+
+
+    <div th:if="${session.profileView == 1}" class="UserMovies">
+        <table>
+            <tr>
+                <th th:text="'Username'"></th>
+                <th th:text="'First Name'"></th>
+                <th th:text="'Last Name'"></th>
+                <th th:text="'Age'"></th>
+                <th th:text="'Country'"></th>
+                <th th:text="'Unfollow'"></th>
+            </tr>
+            <tr th:each="friend : ${session.friends}">
+                <td> <a th:href="@{'/gotofriend/' + ${friend.username}}">[[${friend.username}]]</a></td>
+                <td th:text="${friend.firstName}"></td>
+                <td th:text="${friend.lastName}"></td>
+                <td th:text="${friend.age}"></td>
+                <td th:text="${friend.country}"></td>
+                <td><a th:href="@{'/removeFriend/' + ${friend.id}}">Remove</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div  th:if="${session.profileView == 2}" class="UserMovies">
+        <table>
+            <tr>
+                <th th:text="'Title'"></th>
+                <th th:text="'Country'"></th>
+                <th th:text="'Language'"></th>
+                <th th:text="'For Children'"></th>
+                <th th:text="'Remove'"></th>
+            </tr>
+            <tr th:each="movie : ${session.seenMovies}">
+                <td th:text="${movie.title}"></td>
+                <td th:text="${movie.country}"></td>
+                <td th:text="${movie.movieLanguage}"></td>
+                <td th:if="${movie.forChildren == true}" th:text="'Yes'"></td>
+                <td th:if="${movie.forChildren == false}" th:text="'No'"></td>
+                <td><a th:href="@{'/removeSeenMovie/' + ${movie.id}}">Remove</a></td>
+            </tr>
+        </table>
+    </div>
+
+
+    <div  th:if="${session.profileView == 3}" class="UserMovies">
+        <table>
+            <tr>
+                <th th:text="'Title'"></th>
+                <th th:text="'Country'"></th>
+                <th th:text="'Language'"></th>
+                <th th:text="'For Children'"></th>
+                <th th:text="'Remove'"></th>
+
+            </tr>
+            <tr th:each="movie : ${session.wishedMovies}">
+                <td th:text="${movie.title}"></td>
+                <td th:text="${movie.country}"></td>
+                <td th:text="${movie.movieLanguage}"></td>
+                <td th:if="${movie.forChildren == true}" th:text="'Yes'"></td>
+                <td th:if="${movie.forChildren == false}" th:text="'No'"></td>
+                <td><a th:href="@{'/removeWishedMovie/' + ${movie.id}}">Remove</a></td>
+
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<!-- Movie Subpage 1 --->
+
+<div th:if="${session.movieSubPage == 1  && session.pageShown == 4}">
+    <form action="/searchResult" method="POST">
+        <input type="text" name="searchString" placeholder="Search"/>
+        <select name="detailedSearch">
+            <option th:each="type : ${allTypes}" th:value="${type}" th:text="${type}"></option>
+        </select>
+        <select name="choice">
+            <option th:each="choice : ${allChoices}" th:value="${choice}" th:text="${choice}"></option>
+        </select>
+        <input type="submit"/>
+
+        <h2 th:if="${noMovies == true}" th:text="'No movies found.'"></h2>
+
+        <table th:if="${showMovie == true}">
+            <tr>
+                <th th:text="'Title'"></th>
+                <th th:text="'Country'"></th>
+                <th th:text="'Language'"></th>
+                <th th:text="'For Children'"></th>
+                <th th:text="'Add to has seen'"></th>
+                <th th:text="'Add to wishlist'"></th>
+
+            </tr>
+            <tr th:each="movie : ${session.activeMovies}">
+                <td th:text="${movie.title}"></td>
+                <td th:text="${movie.country}"></td>
+                <td th:text="${movie.movieLanguage}"></td>
+                <td th:if="${movie.forChildren == true}" th:text="'Yes'"></td>
+                <td th:if="${movie.forChildren == false}" th:text="'No'"></td>
+                <td><a th:href="@{'/addSeenMovie/' + ${movie.id}}">Add</a></td>
+                <td><a th:href="@{'/addWishedMovie/' + ${movie.id}}">Add</a></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<!-- Filmbuddies Subpage 1 -->
+
+<div th:if="${session.friendSubPage == 1 && session.pageShown == 3}">
+    <form action="/searchResultUsers" method="POST">
+        <input type="text" name="searchString" placeholder="Search"/>
+        <select name="detailedSearch">
+            <option th:each="type : ${allTypes}" th:value="${type}" th:text="${type}"></option>
+        </select>
+        <select name="choice">
+            <option th:each="choice : ${allChoices}" th:value="${choice}" th:text="${choice}"></option>
+        </select>
+        <input type="submit"/>
+
+        <h2 th:if="${noUser == true}" th:text="'No user found.'"></h2>
+
+        <table th:if="${showUser == true}">
+            <tr>
+                <th th:text="'Username'"></th>
+                <th th:text="'Name'"></th>
+                <th th:text="'Country'"></th>
+                <th th:text="'Gender'"></th>
+                <th th:text="'Add to Friends'"></th>
+
+            </tr>
+            <tr th:each="user : ${session.activeUsers}">
+                <td> <a th:href="@{'/gotofriend/' + ${user.username}}">[[${user.username}]]</a></td>
+                <td th:text="${user.firstName} + ' ' + ${user.lastName}"></td>
+                <td th:text="${user.country}"></td>
+                <td th:text="${user.gender}"></td>
+                <td><a th:href="@{'/addFriend/' + ${user.id}}">Add</a></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+<!-- Friend profile page -->
+
+<div th:if="${session.pageShown == 5}">
+    <div class="userpresentation">
+        <div>
+            <h1 th:text="${session.friend.username}"></h1>
+            <h3 th:text="'Name: ' + ${session.friend.firstName} + ' ' + ${session.friend.lastName}"></h3>
+            <h3 th:text="'Country: ' + ${session.friend.country}"></h3>
+            <h3 th:text="'Age: ' + ${session.friend.age}"></h3>
+        </div>
+        <div>
+            <img src="/ProfilBild.png" style="width:auto;height:auto;">
+        </div>
+    </div>
+
+
+    <div class="nav">
+        <a href="/profilefriends">Friends</a>
+        <a href="/seenmovies">Seen Movies</a>
+        <a href="/wishlist">Wish list</a>
+    </div>
+
+
+    <div th:if="${session.profileView == 1}" class="UserMovies">
+        <table>
+            <tr>
+                <th th:text="'Username'"></th>
+                <th th:text="'First Name'"></th>
+                <th th:text="'Last Name'"></th>
+                <th th:text="'Age'"></th>
+                <th th:text="'Country'"></th>
+
+            </tr>
+            <tr th:each="friend : ${session.friendFriends}">
+                <td> <a th:href="@{'/gotofriend/' + ${friend.username}}">[[${friend.username}]]</a></td>
+                <td th:text="${friend.firstName}"></td>
+                <td th:text="${friend.lastName}"></td>
+                <td th:text="${friend.age}"></td>
+                <td th:text="${friend.country}"></td>
+
+            </tr>
+        </table>
+    </div>
+
+    <div  th:if="${session.profileView == 2}" class="UserMovies">
+        <table>
+            <tr>
+                <th th:text="'Title'"></th>
+                <th th:text="'Country'"></th>
+                <th th:text="'Language'"></th>
+                <th th:text="'For Children'"></th>
+            </tr>
+            <tr th:each="movie : ${session.friendSeenMovies}">
+                <td th:text="${movie.title}"></td>
+                <td th:text="${movie.country}"></td>
+                <td th:text="${movie.movieLanguage}"></td>
+                <td th:if="${movie.forChildren == true}" th:text="'Yes'"></td>
+                <td th:if="${movie.forChildren == false}" th:text="'No'"></td>
+
+            </tr>
+        </table>
+    </div>
+
+
+    <div th:if="${session.profileView == 3}" class="UserMovies">
+        <table>
+            <tr>
+                <th th:text="'Title'"></th>
+                <th th:text="'Country'"></th>
+                <th th:text="'Language'"></th>
+                <th th:text="'For Children'"></th>
+
+            </tr>
+            <tr th:each="movie : ${session.friendWishedMovies}">
+                <td th:text="${movie.title}"></td>
+                <td th:text="${movie.country}"></td>
+                <td th:text="${movie.movieLanguage}"></td>
+                <td th:if="${movie.forChildren == true}" th:text="'Yes'"></td>
+                <td th:if="${movie.forChildren == false}" th:text="'No'"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<div id="PageFooter">Copyright Filmbuddy 2019</div>
+</body>
+</html>

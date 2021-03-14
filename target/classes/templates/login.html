@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" type="text/css" href="/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css"/>
+    <meta charset="UTF-8">
+    <title>Welcome to Filmbuddy!</title>
+</head>
+<body>
+
+<div th:if="${loginPageVisible == true}" id="Header">
+<h1>Welcome to Filmbuddy!</h1>
+<div id="LoginNavigation">
+<form action="/login" method="POST">
+    <input type="text" name="username" placeholder="User Name">
+    <input type="password" name="password" placeholder="Password">
+    <input type="submit"/>
+</form>
+</div>
+    <div class="content-Login">
+        <a href="/createaccount">Create new account</a>
+        <p>
+            Welcome to FilmBuddy- your ultimate movie friend!
+        </p>
+
+    </div>
+</div>
+<div id="PageContent">
+
+
+
+
+
+<div th:if="${session.accountPageVisible == true}" id="createcontent" >
+    <h1>Create Account</h1>
+    <form action="/createdAccount" method="post" id="createform">
+        <table>
+            <tr>
+                <td>
+                    Username:
+                </td>
+                <td>
+                    <input type="text" name="username" placeholder="username"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    E-mail:
+                </td>
+                <td>
+                    <input type="text" name="emailAddress" placeholder="e-mail"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Password:                 </td>
+                <td>
+                    <input type="password" name="password" placeholder="password"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    First name:
+                </td>
+                <td>
+                    <input type="text" name="firstName" placeholder="first name"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Last Name:
+                </td>
+                <td>
+                    <input type="text" name="lastName" placeholder="last name"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                        Age:
+                </td>
+                <td>
+                    <input type="text" name="age" placeholder="age"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Country:
+                </td>
+                <td>
+                    <input type="text" name="country" placeholder="country"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Gender:
+                </td>
+                <td>
+                    <select name="gender" >
+                        <option th:each="choice : ${allChoices}" th:value="${choice}" th:text="${choice}"></option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+
+                    <input type="submit">
+                </td>
+                <td>
+
+                </td>
+            </tr>
+
+
+
+
+        </table>
+    </form>
+    <p th:if="${error == true}" th:text="'Something went wrong'"></p>
+    <p th:if="${usernameTaken == true}" th:text="'Account already exists on that username'"></p>
+    <p th:if="${emailTaken == true}" th:text="'Account already exists on that e-mail'"></p>
+    <p th:if="${emailNotCorrect == true}" th:text="'Email does not contain @'"></p>
+    <p th:if="${success == true}" th:text="'The account was created'"></p>
+    <a th:href="@{/login}" th:text="'Return to login page'"></a>
+</div>
+</div>
+
+</body>
+</html>

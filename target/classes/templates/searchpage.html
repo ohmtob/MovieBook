@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    <link rel="stylesheet" type="text/css" href="/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css"/>
+</head>
+<body>
+<h1>Welcome to Filmbuddy!</h1>
+<h2>
+<form action="/searchResult" method="POST">
+    <input type="text" name="searchString" placeholder="Search"/>
+    <select name="detailedSearch" >
+        <option th:each="type : ${allTypes}" th:value="${type}" th:text="${type}"></option>
+    </select>
+    <select name="choice" >
+        <option th:each="choice : ${allChoices}" th:value="${choice}" th:text="${choice}"></option>
+    </select>
+    <input type="submit"/>
+
+    <h2 th:if="${noMovies == true}" th:text="'No movies found.'"></h2>
+
+    <table th:if="${showMovie == true}">
+        <tr>
+            <th th:text="'Title'"></th>
+            <th th:text="'Country'"></th>
+            <th th:text="'Language'"></th>
+            <th th:text="'For Children'"></th>
+            <th th:text="'Add to has seen'"></th>
+            <th th:text="'Add to wishlist'"></th>
+
+        </tr>
+        <tr th:each="movie : ${session.activeMovies}">
+            <td th:text="${movie.title}"></td>
+            <td th:text="${movie.country}"></td>
+            <td th:text="${movie.movieLanguage}"></td>
+            <td th:if="${movie.forChildren == true}" th:text="'Yes'"></td>
+            <td th:if="${movie.forChildren == false}" th:text="'No'"></td>
+            <td><a th:href="@{'/addSeenMovie/' + ${movie.id}}">Add</a></td>
+            <td><a th:href="@{'/addWishedMovie/' + ${movie.id}}">Add</a></td>
+        </tr>
+    </table>
+</form>
+</h2>
+<div id="PageFooter">Copyright Filmbuddy 2019</div>
+</body>
+</html>

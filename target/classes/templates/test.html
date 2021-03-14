@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div>
+    <div></div>
+    <h1 th:text="${session.activeMovie.title}"></h1>
+
+    <table th:if="${showMovie == true}">
+            <tr>
+                <th th:text="'Country'"></th>
+                <th th:text="'Language'"></th>
+                <th th:text="'For Children'"></th>
+                <th th:text="'Add to has seen'"></th>
+                <th th:text="'Add to wishlist'"></th>
+
+            </tr>
+            <tr>
+                <td th:text="${activeMovie.country}"></td>
+                <td th:text="${activeMovie.movieLanguage}"></td>
+                <td th:if="${activeMovie.forChildren == true}" th:text="'Yes'"></td>
+                <td th:if="${activeMovie.forChildren == false}" th:text="'No'"></td>
+                <td><a th:href="@{'/addSeenMovie/' + ${movie.id}}">Add</a></td>
+                <td><a th:href="@{'/addWishedMovie/' + ${movie.id}}">Add</a></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+<body>
+<h1>Welcome to Filmbuddy!</h1>
+<form action="/searchResultUsers" method="POST">
+    <input type="text" name="searchString" placeholder="Search"/>
+    <select name="detailedSearch" >
+        <option th:each="type : ${allTypes}" th:value="${type}" th:text="${type}"></option>
+    </select>
+    <select name="choice" >
+        <option th:each="choice : ${allChoices}" th:value="${choice}" th:text="${choice}"></option>
+    </select>
+    <input type="submit"/>
+
+    <h2 th:if="${noUser == true}" th:text="'No user found.'"></h2>
+
+    <table th:if="${showUser == true}">
+        <tr>
+            <th th:text="'Username'"></th>
+            <th th:text="'Name'"></th>
+            <th th:text="'Country'"></th>
+            <th th:text="'Gender'"></th>
+            <th th:text="'Add to Friends'"></th>
+
+        </tr>
+        <tr th:each="user : ${session.activeUsers}">
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.firstName} + ' ' + ${user.lastName}"></td>
+            <td th:text="${user.country}"></td>
+            <td th:text="${user.gender}"></td>
+            <td><a th:href="@{'/addFriend/' + ${user.id}}">Add</a></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

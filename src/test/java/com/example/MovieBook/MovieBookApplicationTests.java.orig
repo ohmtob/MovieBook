@@ -1,0 +1,152 @@
+package com.example.MovieBook;
+
+import net.bytebuddy.asm.Advice;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class MovieBookApplicationTests {
+
+	@Autowired
+	MovieRepository movieRepository;
+
+	@Autowired
+	UserRepository userRepository;
+
+	@Test
+	public void contextLoads() {}
+
+	@Test
+	public void testMoviesCount() {
+		int count = movieRepository.getMovieCount();
+		Assert.assertEquals("Books count should be 3", 3, count);
+	}
+
+	@Test
+	public void testGetMovies() {
+		List<Movie> movies = movieRepository.getAllMovies();
+		Assert.assertEquals("There should be 3 movies in the list", 3, movies.size());
+	}
+
+
+	@Test
+	public void testUserCount() {
+		int count = userRepository.getUserCount();
+		Assert.assertEquals("User count should be 4", 4, count);
+	}
+
+	@Test
+	public void testUserPassword() {
+		String password = userRepository.getUserPassword("Alexander");
+		Assert.assertEquals("Password should be 123","123",password);
+	}
+
+	@Test
+	public void testUserByName(){
+		String username = userRepository.getUserByName("Linus", "Lind");
+		Assert.assertEquals("Username should be pleonasmen","pleonasmen",username);
+	}
+
+	@Test
+	public void testUsersByCountry(){
+		List<User> users = userRepository.getAllUsersByCountry("Sweden");
+		Assert.assertEquals("Should be 2 users",users.size(),users.size());
+	}
+
+
+
+	@Test
+	public void testGetMovieWithId() {
+		Movie movie = movieRepository.getMovieById(2);
+		Assert.assertEquals("Movie with id=2 should have title Reservoir Dogs", "Reservoir Dogs", movie.getTitle());
+	}
+
+	@Test
+	public void testGetMovieWithTitle() {
+		List<Movie> movies = movieRepository.getMoviesByName("Reservoir Dogs");
+		Assert.assertEquals("Movie with name Reservoir Dogs should be 1", 1, movies.size());
+	}
+
+	@Test
+	public void testGetMovieWithDirector() {
+		List<Movie> movies = movieRepository.getMovieByDirectorWholeName("Quentin Tarantino");
+		Assert.assertEquals("Movies by Quentin Tarantino should be 3", 3, movies.size());
+	}
+
+	@Test
+	public void testGetMovieByLanguage() {
+		List<Movie> movies = movieRepository.getMoviesByLanguage("English");
+		Assert.assertEquals("Movies with English should be 3", 3, movies.size());
+	}
+
+	@Test
+	public void testGetMovieByCountry() {
+		List<Movie> movies = movieRepository.getMoviesByCountry("USA");
+		Assert.assertEquals("Movies from USA should be 3", 3, movies.size());
+	}
+
+
+	@Test
+	public void testGetMovieByYear() {
+		List<Movie> movies = movieRepository.getMoviesByYear(1993);
+		Assert.assertEquals("Movies year 1993 should be 1", 1, movies.size());
+	}
+
+	@Test
+	public void testGetMovieForChildren() {
+		List<Movie> movies = movieRepository.getMoviesForChildren(false);
+		Assert.assertEquals("Movies not for children should be 3", 3, movies.size());
+	}
+
+
+	@Test
+	public void testGetMovieByGenre() {
+		List<Movie> movies = movieRepository.getMovieByDirectorWholeName("Quentin Tarantino");
+		Assert.assertEquals("Movies by Quentin Tarantino should be 3", 0, movies.size());
+	}
+
+	@Test
+	public void testGetMovieByDirector() {
+		List<Movie> movies = movieRepository.getMovieByDirectorWholeName("Quentin Tarantino");
+		Assert.assertEquals("Movies by Quentin Tarantino should be 3", 0, movies.size());
+	}
+
+	/*
+	@Test
+	public void testGetBooksByCustomer() {
+		List<Book> books = bookRepository.getBooksByCustomer("Donald");
+		Assert.assertEquals("Book purchased by customer Donald should be Douglas Adams", "Douglas Adams", books.get(0).getAuthor());
+	}
+
+
+
+	@Test
+	public void testAddBook() {
+		int count = bookRepository.getBooksCount();
+		bookRepository.addBook(new Book(null, "New Book Title", "Test Class", 1));
+		List<Book> books = bookRepository.getBooks();
+
+		Assert.assertEquals("Books count is increased with 1", (count+1), books.size());
+
+		Book lastBook = books.get(books.size()-1);
+
+		Assert.assertEquals("Last book is the book created by this method", "Test Class", lastBook.getAuthor());
+	}
+
+
+	@Test
+	public void testGetBooksMeta() {
+		int count = bookRepository.getBooksCount();
+		List<Book> books = bookRepository.getBooksMeta();
+		Assert.assertEquals("There should be 3 books in the list", count, books.size());
+	}
+
+}

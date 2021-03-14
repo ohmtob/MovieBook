@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" type="text/css" href="normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css"/>
+    <meta charset="UTF-8">
+    <title>Movies</title>
+</head>
+<body>
+<h1>Movies!</h1>
+<h2>
+<table>
+    <tr>
+        <th th:text="'Title'"></th>
+        <th th:text="'Country'"></th>
+        <th th:text="'Language'"></th>
+        <th th:text="'For Children'"></th>
+    </tr>
+    <tr th:each="movie : ${session.userMovies}">
+        <td th:text="${movie.title}"></td>
+        <td th:text="${movie.country}"></td>
+        <td th:text="${movie.movieLanguage}"></td>
+        <td th:if="${movie.forChildren == true}" th:text="'Yes'"></td>
+        <td th:if="${movie.forChildren == false}" th:text="'No'"></td>
+
+
+    </tr>
+</table>
+</h2>
+<div id="PageFooter">Copyright Filmbuddy 2019</div>
+</body>
+</html>
